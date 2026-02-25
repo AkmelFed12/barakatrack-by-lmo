@@ -14,7 +14,7 @@ export default function Login() {
         setAuth(res.token, res.user);
         setStatus("Connecte.");
       } else {
-        setStatus(res.error ?? "Erreur.");
+        setStatus(res.error ?? `Erreur (${res._status ?? "?"}).`);
       }
     } catch {
       setStatus("Erreur.");

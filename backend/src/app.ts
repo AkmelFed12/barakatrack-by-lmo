@@ -19,6 +19,10 @@ app.get("/health", (_req, res) => {
   res.json({ status: "ok" });
 });
 
+app.get("/", (_req, res) => {
+  res.json({ status: "ok", service: "barakatrack-backend" });
+});
+
 app.use("/auth", authRoutes);
 app.use("/journal", journalRoutes);
 app.use("/qcm", qcmRoutes);

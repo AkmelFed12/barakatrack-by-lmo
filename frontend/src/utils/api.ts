@@ -33,7 +33,7 @@ export async function apiGet(path: string) {
   const res = await fetch(`${API_URL}${path}`, {
     headers: token ? { Authorization: `Bearer ${token}` } : undefined
   });
-  return res.json();
+  return safeJson(res);
 }
 
 export async function apiPost(path: string, body: unknown) {
@@ -46,5 +46,15 @@ export async function apiPost(path: string, body: unknown) {
     },
     body: JSON.stringify(body)
   });
-  return res.json();
+  return safeJson(res);
+}
+
+async function safeJson(res: Response) {
+  const text = await res.text();
+  try {
+    const data = text ? JSON.parse(text) : {};
+    return { ...data, _status: res.status, _ok: res.ok };
+  } catch {
+    return { _status: res.status, _ok: res.ok, _raw: text };
+  }
 }

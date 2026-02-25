@@ -15,7 +15,7 @@ export default function Signup() {
         setAuth(res.token, res.user);
         setStatus("Compte cree.");
       } else {
-        setStatus(res.error ?? "Erreur.");
+        setStatus(res.error ?? `Erreur (${res._status ?? "?"}).`);
       }
     } catch {
       setStatus("Erreur.");
