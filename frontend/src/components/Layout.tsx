@@ -16,10 +16,25 @@ const navItems = [
 export default function Layout() {
   const location = useLocation();
   const [user, setUser] = useState(getUser());
+  const [theme, setTheme] = useState<"day" | "night">("day");
 
   useEffect(() => {
     setUser(getUser());
   }, [location.pathname]);
+
+  useEffect(() => {
+    const saved = localStorage.getItem("bt_theme");
+    const next = saved === "night" ? "night" : "day";
+    setTheme(next);
+    document.documentElement.setAttribute("data-theme", next);
+  }, []);
+
+  const toggleTheme = () => {
+    const next = theme === "day" ? "night" : "day";
+    setTheme(next);
+    localStorage.setItem("bt_theme", next);
+    document.documentElement.setAttribute("data-theme", next);
+  };
 
   return (
     <div>
@@ -44,6 +59,9 @@ export default function Layout() {
             ))}
           </nav>
           <div className="actions">
+            <button className="btn" type="button" onClick={toggleTheme}>
+              Theme: {theme === "day" ? "Clair" : "Nuit"}
+            </button>
             {user ? (
               <>
                 <span className="badge">Salut {user.name ?? user.email}</span>
