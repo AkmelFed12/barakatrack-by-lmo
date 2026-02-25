@@ -3,6 +3,7 @@ import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
 import { z } from "zod";
 import { prisma } from "../utils/db";
+import { generateWelcome } from "../services/openaiService";
 
 const registerSchema = z.object({
   email: z.string().email(),
@@ -32,12 +33,15 @@ export async function register(req: Request, res: Response) {
     data: { email, name, password: hash }
   });
 
+  const welcome = await generateWelcome(name ?? "etudiant");
+
   const secret = process.env.JWT_SECRET || "dev_secret";
   const token = jwt.sign({ userId: user.id }, secret, { expiresIn: "7d" });
 
   return res.json({
     user: { id: user.id, email: user.email, name: user.name },
-    token
+    token,
+    welcome
   });
 }
 

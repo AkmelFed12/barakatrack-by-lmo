@@ -11,7 +11,9 @@ const navItems = [
   { label: "Chatbot", to: "/chatbot" },
   { label: "Rapports", to: "/reports" },
   { label: "Ramadan", to: "/ramadan" },
-  { label: "Parametres", to: "/settings" }
+  { label: "Parametres", to: "/settings" },
+  { label: "Tarifs", to: "/pricing" },
+  { label: "A propos", to: "/about" }
 ];
 
 export default function Layout() {
@@ -91,7 +93,13 @@ export default function Layout() {
       <Outlet />
 
       <footer className="footer container">
-        BarakaTrack IA - Etudes, Foi, Equilibre · Design & Development by LMO Web Services
+        <div className="list">
+          <div>BarakaTrack IA - Etudes, Foi, Equilibre · Design & Development by LMO Web Services</div>
+          <div>
+            <a href="/privacy">Confidentialite</a> ·{" "}
+            <a href="/legal">Mentions legales</a>
+          </div>
+        </div>
       </footer>
 
       <ToastHost />

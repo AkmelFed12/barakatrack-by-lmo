@@ -12,6 +12,10 @@ import Login from "./pages/Login";
 import Signup from "./pages/Signup";
 import ProtectedRoute from "./components/ProtectedRoute";
 import Onboarding from "./pages/Onboarding";
+import About from "./pages/About";
+import Legal from "./pages/Legal";
+import Privacy from "./pages/Privacy";
+import Pricing from "./pages/Pricing";
 
 export default function App() {
   return (
@@ -77,6 +81,10 @@ export default function App() {
         <Route path="/login" element={<Login />} />
         <Route path="/signup" element={<Signup />} />
         <Route path="/onboarding" element={<Onboarding />} />
+        <Route path="/about" element={<About />} />
+        <Route path="/legal" element={<Legal />} />
+        <Route path="/privacy" element={<Privacy />} />
+        <Route path="/pricing" element={<Pricing />} />
         <Route path="*" element={<Navigate to="/" replace />} />
       </Route>
     </Routes>

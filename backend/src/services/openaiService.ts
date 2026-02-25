@@ -55,3 +55,8 @@ export async function askAssistant(message: string) {
     `Style clair et motivant. Question: ${message}`;
   return callWorkersAI(prompt);
 }
+
+export async function generateWelcome(name: string) {
+  const prompt = `Ecris un court message de bienvenue pour ${name}, ton chaleureux et motivant.`;
+  return callWorkersAI(prompt);
+}

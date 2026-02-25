@@ -18,6 +18,9 @@ export default function Signup() {
         setAuth(res.token, res.user);
         setStatus("Compte cree.");
         showToast("Compte cree.");
+        if (res.welcome) {
+          showToast(res.welcome);
+        }
         const profile = localStorage.getItem("bt_profile");
         if (profile) {
           try {
