@@ -13,7 +13,9 @@ const navItems = [
   { label: "Ramadan", to: "/ramadan" },
   { label: "Parametres", to: "/settings" },
   { label: "Tarifs", to: "/pricing" },
-  { label: "A propos", to: "/about" }
+  { label: "A propos", to: "/about" },
+  { label: "FAQ", to: "/faq" },
+  { label: "Temoignages", to: "/testimonials" }
 ];
 
 export default function Layout() {

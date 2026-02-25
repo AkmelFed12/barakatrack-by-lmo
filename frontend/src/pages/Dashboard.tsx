@@ -18,7 +18,9 @@ export default function Dashboard() {
     streak: number;
     badges: string[];
   } | null>(null);
-  const [reminders, setReminders] = useState<string[]>([]);
+  const [reminders, setReminders] = useState<
+    Array<{ message: string; priority: string; type: string }>
+  >([]);
   const [error, setError] = useState("");
 
   useEffect(() => {
@@ -148,7 +150,9 @@ export default function Dashboard() {
         <div className="list">
           {reminders.length === 0 && <div>Aucun rappel pour le moment.</div>}
           {reminders.map((item, index) => (
-            <div key={`${item}-${index}`}>{item}</div>
+            <div key={`${item.message}-${index}`}>
+              <strong>[{item.type}]</strong> {item.message}
+            </div>
           ))}
         </div>
       </section>
