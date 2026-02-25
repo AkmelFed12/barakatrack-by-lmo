@@ -1,10 +1,20 @@
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { apiGet, apiPost, isAuthed } from "../utils/api";
+import Sparkline from "../components/Sparkline";
 
 export default function Dashboard() {
   const [summary, setSummary] = useState("Chargement du resume IA...");
-  const [stats, setStats] = useState<{ journalCount: number; qcmCount: number } | null>(null);
+  const [stats, setStats] = useState<{
+    journalCount: number;
+    qcmCount: number;
+    journalsWeek: number;
+    journalsPrevWeek: number;
+    qcmWeek: number;
+    qcmPrevWeek: number;
+    balanceScore: number;
+    journalSeries: number[];
+  } | null>(null);
   const [error, setError] = useState("");
 
   useEffect(() => {
@@ -60,12 +70,23 @@ export default function Dashboard() {
             <div className="card">
               <strong>{stats?.journalCount ?? 0}</strong>
               <div>Journaux</div>
+              <small>
+                {stats ? `${stats.journalsWeek} cette semaine / ${stats.journalsPrevWeek} derniere` : ""}
+              </small>
             </div>
             <div className="card">
               <strong>{stats?.qcmCount ?? 0}</strong>
               <div>QCM effectues</div>
+              <small>
+                {stats ? `${stats.qcmWeek} cette semaine / ${stats.qcmPrevWeek} derniere` : ""}
+              </small>
+            </div>
+            <div className="card">
+              <strong>{stats?.balanceScore ?? 0}</strong>
+              <div>Indice equilibre</div>
             </div>
           </div>
+          <Sparkline data={stats?.journalSeries ?? [0, 0, 0, 0, 0, 0, 0]} />
         </div>
         <div className="card">
           <h3>Resume IA du jour</h3>

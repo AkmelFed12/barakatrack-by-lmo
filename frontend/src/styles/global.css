@@ -266,6 +266,29 @@ main {
   box-shadow: var(--glow);
 }
 
+.toast-host {
+  position: fixed;
+  right: 20px;
+  bottom: 20px;
+  display: grid;
+  gap: 10px;
+  z-index: 50;
+}
+
+.toast {
+  background: var(--card);
+  border: 1px solid rgba(16, 20, 16, 0.12);
+  border-radius: 14px;
+  padding: 12px 14px;
+  box-shadow: var(--shadow);
+  min-width: 220px;
+  font-weight: 600;
+}
+
+[data-theme="night"] .toast {
+  border: 1px solid rgba(238, 243, 238, 0.12);
+}
+
 @keyframes fadeInUp {
   from {
     opacity: 0;

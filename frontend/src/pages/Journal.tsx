@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { apiGet, apiPost, isAuthed } from "../utils/api";
+import { apiGet, apiPost, isAuthed, showToast } from "../utils/api";
 
 export default function Journal() {
   const [summary, setSummary] = useState("Aucun resume pour le moment.");
@@ -17,6 +17,7 @@ export default function Journal() {
     try {
       if (!isAuthed()) {
         setStatus("Connecte-toi pour soumettre le journal.");
+        showToast("Connexion requise.");
         return;
       }
       const res = await apiPost("/journal", {
@@ -29,9 +30,11 @@ export default function Journal() {
       const next = res.entry?.summary ?? "Resume indisponible.";
       setSummary(next);
       setStatus("Journal enregistre.");
+      showToast("Journal enregistre.");
     } catch {
       setSummary("Resume indisponible.");
       setStatus("Erreur d envoi.");
+      showToast("Erreur d envoi.");
     }
   };
 

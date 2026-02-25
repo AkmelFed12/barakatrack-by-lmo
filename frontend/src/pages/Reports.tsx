@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { apiGet, isAuthed } from "../utils/api";
+import { apiGet, isAuthed, showToast } from "../utils/api";
 
 export default function Reports() {
   const [pdfStatus, setPdfStatus] = useState<string | null>(null);
@@ -12,6 +12,7 @@ export default function Reports() {
       if (!isAuthed()) {
         setPdfStatus("Connecte-toi pour telecharger le PDF.");
         setLoading(false);
+        showToast("Connexion requise.");
         return;
       }
       const res = await apiGet("/pdf/generate");
@@ -30,11 +31,14 @@ export default function Reports() {
         link.click();
         URL.revokeObjectURL(url);
         setPdfStatus("PDF telecharge.");
+        showToast("PDF telecharge.");
       } else {
         setPdfStatus("PDF indisponible.");
+        showToast("PDF indisponible.");
       }
     } catch {
       setPdfStatus("PDF indisponible.");
+      showToast("PDF indisponible.");
     } finally {
       setLoading(false);
     }

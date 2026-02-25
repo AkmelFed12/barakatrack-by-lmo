@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { apiGet, apiPost, isAuthed } from "../utils/api";
+import { apiGet, apiPost, isAuthed, showToast } from "../utils/api";
 
 type ChatMessage = { role: "user" | "assistant"; content: string };
 
@@ -46,6 +46,7 @@ export default function Chatbot() {
         { role: "assistant", content: "Connecte-toi pour utiliser le chatbot." }
       ]);
       setInput("");
+      showToast("Connexion requise.");
       return;
     }
     const next: ChatMessage[] = [

@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { apiGet, apiPost, isAuthed } from "../utils/api";
+import { apiGet, apiPost, isAuthed, showToast } from "../utils/api";
 
 type QcmResponse = {
   qcm?: {
@@ -48,6 +48,7 @@ export default function Qcm() {
   const handleSubmit = async () => {
     if (!isAuthed()) {
       setFeedback("Connecte-toi pour soumettre le QCM.");
+      showToast("Connexion requise.");
       return;
     }
     setLoading(true);
@@ -56,8 +57,10 @@ export default function Qcm() {
       const payload = Object.entries(answers).map(([q, a]) => ({ q, a }));
       const res = await apiPost("/qcm/submit", { answers: payload });
       setFeedback(res.result?.feedback ?? "Correction indisponible.");
+      showToast("QCM soumis.");
     } catch {
       setFeedback("Correction indisponible.");
+      showToast("Erreur QCM.");
     } finally {
       setLoading(false);
     }

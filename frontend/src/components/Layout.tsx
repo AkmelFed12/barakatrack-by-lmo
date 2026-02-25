@@ -1,6 +1,7 @@
 import { Link, Outlet, useLocation } from "react-router-dom";
 import { useEffect, useState } from "react";
-import { clearAuth, getUser } from "../utils/api";
+import { clearAuth, getUser, showToast } from "../utils/api";
+import ToastHost from "./ToastHost";
 
 const navItems = [
   { label: "Accueil", to: "/" },
@@ -71,6 +72,7 @@ export default function Layout() {
                   onClick={() => {
                     clearAuth();
                     setUser(null);
+                    showToast("Deconnecte.");
                   }}
                 >
                   Deconnexion
@@ -91,6 +93,8 @@ export default function Layout() {
       <footer className="footer container">
         BarakaTrack IA - Etudes, Foi, Equilibre · Design & Development by LMO Web Services
       </footer>
+
+      <ToastHost />
     </div>
   );
 }
