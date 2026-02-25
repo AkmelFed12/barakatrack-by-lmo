@@ -24,3 +24,18 @@ export async function submitQcm(req: Request, res: Response) {
   });
   res.json({ result });
 }
+
+export async function getHistory(req: Request, res: Response) {
+  const reqWithUser = req as Request & { userId?: string };
+  if (!reqWithUser.userId) {
+    return res.status(401).json({ error: "Unauthorized" });
+  }
+
+  const runs = await prisma.qcmRun.findMany({
+    where: { userId: reqWithUser.userId },
+    orderBy: { createdAt: "desc" },
+    take: 10
+  });
+
+  return res.json({ runs });
+}

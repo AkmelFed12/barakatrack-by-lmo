@@ -1,9 +1,10 @@
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
-import { apiPost } from "../utils/api";
+import { apiGet, apiPost } from "../utils/api";
 
 export default function Dashboard() {
   const [summary, setSummary] = useState("Chargement du resume IA...");
+  const [stats, setStats] = useState<{ journalCount: number; qcmCount: number } | null>(null);
 
   useEffect(() => {
     const run = async () => {
@@ -12,8 +13,11 @@ export default function Dashboard() {
           text: "5 prieres, 2h etudes, marche 20 minutes"
         });
         setSummary(res.summary ?? "Resume indisponible.");
+        const statsRes = await apiGet("/stats");
+        setStats(statsRes);
       } catch {
         setSummary("Resume indisponible.");
+        setStats(null);
       }
     };
     run();
@@ -36,12 +40,12 @@ export default function Dashboard() {
           </div>
           <div className="kpi">
             <div className="card">
-              <strong>3</strong>
-              <div>Jours d avance</div>
+              <strong>{stats?.journalCount ?? 0}</strong>
+              <div>Journaux</div>
             </div>
             <div className="card">
-              <strong>2</strong>
-              <div>Rappels actifs</div>
+              <strong>{stats?.qcmCount ?? 0}</strong>
+              <div>QCM effectues</div>
             </div>
           </div>
         </div>

@@ -35,3 +35,18 @@ export async function getSummary(req: Request, res: Response) {
   const summary = await generateSummary(journalText);
   res.json({ summary });
 }
+
+export async function getHistory(req: Request, res: Response) {
+  const reqWithUser = req as Request & { userId?: string };
+  if (!reqWithUser.userId) {
+    return res.status(401).json({ error: "Unauthorized" });
+  }
+
+  const entries = await prisma.journal.findMany({
+    where: { userId: reqWithUser.userId },
+    orderBy: { createdAt: "desc" },
+    take: 10
+  });
+
+  return res.json({ entries });
+}

@@ -1,8 +1,11 @@
-import { useState } from "react";
-import { apiPost } from "../utils/api";
+import { useEffect, useState } from "react";
+import { apiGet, apiPost } from "../utils/api";
 
 export default function Journal() {
   const [summary, setSummary] = useState("Aucun resume pour le moment.");
+  const [history, setHistory] = useState<
+    Array<{ id: string; createdAt: string; summary?: string | null }>
+  >([]);
   const [tasks, setTasks] = useState("");
   const [prayers, setPrayers] = useState(5);
   const [quranMinutes, setQuranMinutes] = useState(10);
@@ -24,6 +27,20 @@ export default function Journal() {
       setSummary("Resume indisponible.");
     }
   };
+
+  useEffect(() => {
+    const run = async () => {
+      try {
+        const res = await apiGet("/journal/history");
+        if (Array.isArray(res.entries)) {
+          setHistory(res.entries);
+        }
+      } catch {
+        setHistory([]);
+      }
+    };
+    run();
+  }, []);
 
   return (
     <main>
@@ -91,6 +108,16 @@ export default function Journal() {
             <div>Bloquer 30 minutes sans ecran avant d dormir.</div>
             <div>Ajouter 10 minutes de dhikr apres asr.</div>
             <div>Preparer la liste de revision pour demain.</div>
+          </div>
+          <h3>Historique recent</h3>
+          <div className="list">
+            {history.length === 0 && <div>Aucune entree.</div>}
+            {history.map((entry) => (
+              <div key={entry.id}>
+                {new Date(entry.createdAt).toLocaleDateString("fr-FR")} -{" "}
+                {entry.summary ?? "Sans resume"}
+              </div>
+            ))}
           </div>
         </div>
       </section>

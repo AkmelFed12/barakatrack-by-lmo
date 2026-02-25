@@ -2,16 +2,34 @@ import { useState } from "react";
 import { apiGet } from "../utils/api";
 
 export default function Reports() {
-  const [pdfUrl, setPdfUrl] = useState<string | null>(null);
+  const [pdfStatus, setPdfStatus] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
 
   const handleDownload = async () => {
     setLoading(true);
+    setPdfStatus(null);
     try {
       const res = await apiGet("/pdf/generate");
-      setPdfUrl(res.url ?? null);
+      if (res.base64 && res.filename) {
+        const byteCharacters = atob(res.base64);
+        const byteNumbers = Array.from(byteCharacters).map((char) =>
+          char.charCodeAt(0)
+        );
+        const blob = new Blob([new Uint8Array(byteNumbers)], {
+          type: "application/pdf"
+        });
+        const url = URL.createObjectURL(blob);
+        const link = document.createElement("a");
+        link.href = url;
+        link.download = res.filename;
+        link.click();
+        URL.revokeObjectURL(url);
+        setPdfStatus("PDF telecharge.");
+      } else {
+        setPdfStatus("PDF indisponible.");
+      }
     } catch {
-      setPdfUrl(null);
+      setPdfStatus("PDF indisponible.");
     } finally {
       setLoading(false);
     }
@@ -50,7 +68,7 @@ export default function Reports() {
           Telecharger PDF
         </button>
         {loading && <p>Generation en cours...</p>}
-        {pdfUrl && <p>PDF pret: {pdfUrl}</p>}
+        {pdfStatus && <p>{pdfStatus}</p>}
       </section>
     </main>
   );

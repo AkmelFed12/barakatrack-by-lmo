@@ -6,6 +6,8 @@ import journalRoutes from "./routes/journal";
 import qcmRoutes from "./routes/qcm";
 import chatbotRoutes from "./routes/chatbot";
 import pdfRoutes from "./routes/pdf";
+import { getStats } from "./controllers/statsController";
+import { requireAuth } from "./middlewares/auth";
 
 dotenv.config();
 
@@ -22,5 +24,6 @@ app.use("/journal", journalRoutes);
 app.use("/qcm", qcmRoutes);
 app.use("/chatbot", chatbotRoutes);
 app.use("/pdf", pdfRoutes);
+app.get("/stats", requireAuth, getStats);
 
 export default app;

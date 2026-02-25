@@ -1,5 +1,5 @@
-import { useState } from "react";
-import { apiPost } from "../utils/api";
+import { useEffect, useState } from "react";
+import { apiGet, apiPost } from "../utils/api";
 
 type ChatMessage = { role: "user" | "assistant"; content: string };
 
@@ -15,6 +15,25 @@ export default function Chatbot() {
   const [messages, setMessages] = useState<ChatMessage[]>(initialMessages);
   const [input, setInput] = useState("");
   const [loading, setLoading] = useState(false);
+
+  useEffect(() => {
+    const run = async () => {
+      try {
+        const res = await apiGet("/chatbot/history");
+        if (Array.isArray(res.messages) && res.messages.length > 0) {
+          setMessages(
+            res.messages.map((msg: { role: string; content: string }) => ({
+              role: msg.role === "user" ? "user" : "assistant",
+              content: msg.content
+            }))
+          );
+        }
+      } catch {
+        // keep defaults
+      }
+    };
+    run();
+  }, []);
 
   const sendMessage = async () => {
     if (!input.trim()) return;

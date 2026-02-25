@@ -13,6 +13,7 @@ export default function Qcm() {
   const [feedback, setFeedback] = useState("");
   const [answers, setAnswers] = useState<Record<string, string>>({});
   const [loading, setLoading] = useState(false);
+  const [history, setHistory] = useState<Array<{ id: string; createdAt: string; score: number }>>([]);
 
   useEffect(() => {
     const run = async () => {
@@ -24,6 +25,20 @@ export default function Qcm() {
       }
     };
     run();
+  }, []);
+
+  useEffect(() => {
+    const runHistory = async () => {
+      try {
+        const res = await apiGet("/qcm/history");
+        if (Array.isArray(res.runs)) {
+          setHistory(res.runs);
+        }
+      } catch {
+        setHistory([]);
+      }
+    };
+    runHistory();
   }, []);
 
   const handleSubmit = async () => {
@@ -140,6 +155,15 @@ export default function Qcm() {
         <div className="card">
           <h3>Score et explications</h3>
           {loading ? <p>Correction en cours...</p> : <p>{feedback || "Aucune correction."}</p>}
+          <h3>Historique</h3>
+          <div className="list">
+            {history.length === 0 && <div>Aucun QCM.</div>}
+            {history.map((run) => (
+              <div key={run.id}>
+                {new Date(run.createdAt).toLocaleDateString("fr-FR")} - score {run.score}
+              </div>
+            ))}
+          </div>
         </div>
       </section>
     </main>
