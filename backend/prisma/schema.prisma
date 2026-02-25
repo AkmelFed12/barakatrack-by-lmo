@@ -1,0 +1,51 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id        String   @id @default(cuid())
+  email     String   @unique
+  name      String?
+  password  String
+  createdAt DateTime @default(now())
+  journals  Journal[]
+  qcmRuns   QcmRun[]
+  chats     ChatMessage[]
+}
+
+model Journal {
+  id           String   @id @default(cuid())
+  createdAt    DateTime @default(now())
+  tasks        String?
+  prayers      Int
+  quranMinutes Int
+  activityMin  Int
+  mood         String?
+  summary      String?
+  advice       String?
+  userId       String
+  user         User     @relation(fields: [userId], references: [id])
+}
+
+model QcmRun {
+  id        String   @id @default(cuid())
+  createdAt DateTime @default(now())
+  score     Int
+  details   String?
+  userId    String
+  user      User     @relation(fields: [userId], references: [id])
+}
+
+model ChatMessage {
+  id        String   @id @default(cuid())
+  createdAt DateTime @default(now())
+  role      String
+  content   String
+  userId    String
+  user      User     @relation(fields: [userId], references: [id])
+}
