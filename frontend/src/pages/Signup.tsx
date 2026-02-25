@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { apiPost } from "../utils/api";
+import { apiPost, setAuth } from "../utils/api";
 
 export default function Signup() {
   const [name, setName] = useState("");
@@ -11,8 +11,8 @@ export default function Signup() {
     setStatus("Creation du compte...");
     try {
       const res = await apiPost("/auth/register", { name, email, password });
-      if (res.token) {
-        localStorage.setItem("bt_token", res.token);
+      if (res.token && res.user) {
+        setAuth(res.token, res.user);
         setStatus("Compte cree.");
       } else {
         setStatus(res.error ?? "Erreur.");

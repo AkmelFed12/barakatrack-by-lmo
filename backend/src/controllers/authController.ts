@@ -66,3 +66,18 @@ export async function login(req: Request, res: Response) {
     token
   });
 }
+
+export async function me(req: Request, res: Response) {
+  const reqWithUser = req as Request & { userId?: string };
+  if (!reqWithUser.userId) {
+    return res.status(401).json({ error: "Unauthorized" });
+  }
+  const user = await prisma.user.findUnique({
+    where: { id: reqWithUser.userId },
+    select: { id: true, email: true, name: true }
+  });
+  if (!user) {
+    return res.status(404).json({ error: "Not found" });
+  }
+  return res.json({ user });
+}

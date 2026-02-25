@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { apiPost } from "../utils/api";
+import { apiPost, setAuth } from "../utils/api";
 
 export default function Login() {
   const [email, setEmail] = useState("");
@@ -10,8 +10,8 @@ export default function Login() {
     setStatus("Connexion...");
     try {
       const res = await apiPost("/auth/login", { email, password });
-      if (res.token) {
-        localStorage.setItem("bt_token", res.token);
+      if (res.token && res.user) {
+        setAuth(res.token, res.user);
         setStatus("Connecte.");
       } else {
         setStatus(res.error ?? "Erreur.");

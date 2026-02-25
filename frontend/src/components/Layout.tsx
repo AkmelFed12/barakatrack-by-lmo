@@ -1,4 +1,6 @@
 import { Link, Outlet, useLocation } from "react-router-dom";
+import { useEffect, useState } from "react";
+import { clearAuth, getUser } from "../utils/api";
 
 const navItems = [
   { label: "Accueil", to: "/" },
@@ -13,6 +15,11 @@ const navItems = [
 
 export default function Layout() {
   const location = useLocation();
+  const [user, setUser] = useState(getUser());
+
+  useEffect(() => {
+    setUser(getUser());
+  }, [location.pathname]);
 
   return (
     <div>
@@ -37,8 +44,26 @@ export default function Layout() {
             ))}
           </nav>
           <div className="actions">
-            <Link className="btn" to="/login">Connexion</Link>
-            <Link className="btn primary" to="/signup">Inscription</Link>
+            {user ? (
+              <>
+                <span className="badge">Salut {user.name ?? user.email}</span>
+                <button
+                  className="btn"
+                  type="button"
+                  onClick={() => {
+                    clearAuth();
+                    setUser(null);
+                  }}
+                >
+                  Deconnexion
+                </button>
+              </>
+            ) : (
+              <>
+                <Link className="btn" to="/login">Connexion</Link>
+                <Link className="btn primary" to="/signup">Inscription</Link>
+              </>
+            )}
           </div>
         </div>
       </header>
