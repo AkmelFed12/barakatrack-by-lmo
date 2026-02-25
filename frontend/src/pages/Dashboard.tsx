@@ -15,6 +15,7 @@ export default function Dashboard() {
     balanceScore: number;
     journalSeries: number[];
   } | null>(null);
+  const [reminders, setReminders] = useState<string[]>([]);
   const [error, setError] = useState("");
 
   useEffect(() => {
@@ -32,9 +33,12 @@ export default function Dashboard() {
         setSummary(res.summary ?? "Resume indisponible.");
         const statsRes = await apiGet("/stats");
         setStats(statsRes);
+        const remindersRes = await apiGet("/reminders");
+        setReminders(remindersRes.reminders ?? []);
       } catch {
         setSummary("Resume indisponible.");
         setStats(null);
+        setReminders([]);
         setError("Connexion requise ou service indisponible.");
       }
     };
@@ -129,6 +133,16 @@ export default function Dashboard() {
             <div>Rappel: QCM disponible.</div>
             <div>Nouvelle recommandation IA ajoutee.</div>
           </div>
+        </div>
+      </section>
+
+      <section className="card">
+        <h3>Rappels intelligents</h3>
+        <div className="list">
+          {reminders.length === 0 && <div>Aucun rappel pour le moment.</div>}
+          {reminders.map((item, index) => (
+            <div key={`${item}-${index}`}>{item}</div>
+          ))}
         </div>
       </section>
     </main>

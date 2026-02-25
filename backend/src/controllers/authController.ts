@@ -4,6 +4,7 @@ import jwt from "jsonwebtoken";
 import { z } from "zod";
 import { prisma } from "../utils/db";
 import { generateWelcome } from "../services/openaiService";
+import { sendWelcomeEmail } from "../services/emailService";
 
 const registerSchema = z.object({
   email: z.string().email(),
@@ -34,6 +35,11 @@ export async function register(req: Request, res: Response) {
   });
 
   const welcome = await generateWelcome(name ?? "etudiant");
+  sendWelcomeEmail(
+    email,
+    "Bienvenue sur BarakaTrack IA",
+    welcome
+  );
 
   const secret = process.env.JWT_SECRET || "dev_secret";
   const token = jwt.sign({ userId: user.id }, secret, { expiresIn: "7d" });

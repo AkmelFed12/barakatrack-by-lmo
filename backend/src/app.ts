@@ -8,6 +8,7 @@ import chatbotRoutes from "./routes/chatbot";
 import pdfRoutes from "./routes/pdf";
 import { getStats } from "./controllers/statsController";
 import { requireAuth } from "./middlewares/auth";
+import { getReminders } from "./controllers/reminderController";
 
 dotenv.config();
 
@@ -29,5 +30,6 @@ app.use("/qcm", qcmRoutes);
 app.use("/chatbot", chatbotRoutes);
 app.use("/pdf", pdfRoutes);
 app.get("/stats", requireAuth, getStats);
+app.get("/reminders", requireAuth, getReminders);
 
 export default app;
