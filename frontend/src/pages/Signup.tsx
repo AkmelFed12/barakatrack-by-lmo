@@ -1,7 +1,10 @@
 import { useState } from "react";
+import { useNavigate, useLocation } from "react-router-dom";
 import { apiPost, setAuth } from "../utils/api";
 
 export default function Signup() {
+  const navigate = useNavigate();
+  const location = useLocation() as { state?: { from?: string } };
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -14,6 +17,8 @@ export default function Signup() {
       if (res.token && res.user) {
         setAuth(res.token, res.user);
         setStatus("Compte cree.");
+        const target = location.state?.from ?? "/dashboard";
+        navigate(target);
       } else {
         setStatus(res.error ?? `Erreur (${res._status ?? "?"}).`);
       }

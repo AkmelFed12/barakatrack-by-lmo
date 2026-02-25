@@ -1,7 +1,10 @@
 import { useState } from "react";
+import { useNavigate, useLocation } from "react-router-dom";
 import { apiPost, setAuth } from "../utils/api";
 
 export default function Login() {
+  const navigate = useNavigate();
+  const location = useLocation() as { state?: { from?: string } };
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [status, setStatus] = useState("");
@@ -13,6 +16,8 @@ export default function Login() {
       if (res.token && res.user) {
         setAuth(res.token, res.user);
         setStatus("Connecte.");
+        const target = location.state?.from ?? "/dashboard";
+        navigate(target);
       } else {
         setStatus(res.error ?? `Erreur (${res._status ?? "?"}).`);
       }
