@@ -18,6 +18,30 @@ export default function Signup() {
         setAuth(res.token, res.user);
         setStatus("Compte cree.");
         showToast("Compte cree.");
+        const profile = localStorage.getItem("bt_profile");
+        if (profile) {
+          try {
+            const parsed = JSON.parse(profile);
+            const weightMap: Record<string, [number, number, number]> = {
+              "40-40-20": [40, 40, 20],
+              "50-30-20": [50, 30, 20],
+              "30-50-20": [30, 50, 20]
+            };
+            const [weightS, weightA, weightW] =
+              weightMap[parsed.weight] ?? [40, 40, 20];
+            await apiPost("/auth/profile", {
+              goal: parsed.goal,
+              weightS,
+              weightA,
+              weightW,
+              name: parsed.name || name,
+              qcmLevel: "intermediaire",
+              qcmTopic: "etudes et spiritualite"
+            });
+          } catch {
+            // ignore
+          }
+        }
         const target = location.state?.from ?? "/dashboard";
         navigate(target);
       } else {

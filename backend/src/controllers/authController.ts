@@ -81,3 +81,39 @@ export async function me(req: Request, res: Response) {
   }
   return res.json({ user });
 }
+
+export async function updateProfile(req: Request, res: Response) {
+  const reqWithUser = req as Request & { userId?: string };
+  if (!reqWithUser.userId) {
+    return res.status(401).json({ error: "Unauthorized" });
+  }
+
+  const { goal, weightS, weightA, weightW, qcmLevel, qcmTopic, name } =
+    req.body ?? {};
+
+  const updated = await prisma.user.update({
+    where: { id: reqWithUser.userId },
+    data: {
+      name: name ?? undefined,
+      goal: goal ?? undefined,
+      weightS: weightS ?? undefined,
+      weightA: weightA ?? undefined,
+      weightW: weightW ?? undefined,
+      qcmLevel: qcmLevel ?? undefined,
+      qcmTopic: qcmTopic ?? undefined
+    },
+    select: {
+      id: true,
+      email: true,
+      name: true,
+      goal: true,
+      weightS: true,
+      weightA: true,
+      weightW: true,
+      qcmLevel: true,
+      qcmTopic: true
+    }
+  });
+
+  return res.json({ user: updated });
+}

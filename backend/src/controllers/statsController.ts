@@ -27,16 +27,22 @@ function buildSeries(entries: Array<{ createdAt: Date }>, days: number) {
   });
 }
 
-function computeBalance(entry?: {
-  prayers: number;
-  quranMinutes: number;
-  activityMin: number;
-}) {
+function computeBalance(
+  entry: { prayers: number; quranMinutes: number; activityMin: number } | null,
+  weights: { weightS: number; weightA: number; weightW: number },
+  qcmWeek: number
+) {
   if (!entry) return 0;
   const spiritual = Math.min(100, entry.prayers * 20 + entry.quranMinutes);
-  const academic = 70;
+  const academic = Math.min(100, 50 + qcmWeek * 10);
   const wellbeing = Math.min(100, entry.activityMin * 3);
-  return Math.round((spiritual + academic + wellbeing) / 3);
+  const total = weights.weightS + weights.weightA + weights.weightW;
+  return Math.round(
+    (spiritual * weights.weightS +
+      academic * weights.weightA +
+      wellbeing * weights.weightW) /
+      total
+  );
 }
 
 export async function getStats(req: Request, res: Response) {
@@ -50,12 +56,16 @@ export async function getStats(req: Request, res: Response) {
   const prevWeekStart = addDays(today, -13);
   const prevWeekEnd = addDays(today, -7);
 
-  const [journalCount, qcmCount, lastJournal] = await Promise.all([
+  const [journalCount, qcmCount, lastJournal, user] = await Promise.all([
     prisma.journal.count({ where: { userId: reqWithUser.userId } }),
     prisma.qcmRun.count({ where: { userId: reqWithUser.userId } }),
     prisma.journal.findFirst({
       where: { userId: reqWithUser.userId },
       orderBy: { createdAt: "desc" }
+    }),
+    prisma.user.findUnique({
+      where: { id: reqWithUser.userId },
+      select: { weightS: true, weightA: true, weightW: true }
     })
   ]);
 
@@ -94,7 +104,7 @@ export async function getStats(req: Request, res: Response) {
     journalsPrevWeek,
     qcmWeek,
     qcmPrevWeek,
-    balanceScore: computeBalance(lastJournal ?? undefined),
+    balanceScore: computeBalance(lastJournal, user ?? { weightS: 40, weightA: 40, weightW: 20 }, qcmWeek),
     journalSeries: buildSeries(journalsSeries, 7)
   });
 }

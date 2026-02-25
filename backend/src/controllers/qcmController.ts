@@ -3,7 +3,11 @@ import { generateQcmSet, gradeQcm } from "../services/openaiService";
 import { prisma } from "../utils/db";
 
 export async function generateQcm(_req: Request, res: Response) {
-  const qcm = await generateQcmSet("Etudes et spiritualite", "intermediaire");
+  const { topic, level } = _req.query;
+  const qcm = await generateQcmSet(
+    typeof topic === "string" ? topic : "etudes et spiritualite",
+    typeof level === "string" ? level : "intermediaire"
+  );
   res.json({ qcm });
 }
 

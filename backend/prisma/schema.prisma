@@ -12,6 +12,12 @@ model User {
   email     String   @unique
   name      String?
   password  String
+  goal      String   @default("equilibre")
+  weightS   Int      @default(40)
+  weightA   Int      @default(40)
+  weightW   Int      @default(20)
+  qcmLevel  String   @default("intermediaire")
+  qcmTopic  String   @default("etudes et spiritualite")
   createdAt DateTime @default(now())
   journals  Journal[]
   qcmRuns   QcmRun[]
