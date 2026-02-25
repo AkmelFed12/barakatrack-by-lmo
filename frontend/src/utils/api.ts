@@ -4,6 +4,10 @@ function getToken() {
   return localStorage.getItem("bt_token");
 }
 
+export function isAuthed() {
+  return !!getToken();
+}
+
 export function setAuth(token: string, user: { id: string; email: string; name?: string | null }) {
   localStorage.setItem("bt_token", token);
   localStorage.setItem("bt_user", JSON.stringify(user));

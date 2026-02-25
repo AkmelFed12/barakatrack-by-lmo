@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { apiGet, apiPost } from "../utils/api";
+import { apiGet, apiPost, isAuthed } from "../utils/api";
 
 type ChatMessage = { role: "user" | "assistant"; content: string };
 
@@ -19,6 +19,9 @@ export default function Chatbot() {
   useEffect(() => {
     const run = async () => {
       try {
+        if (!isAuthed()) {
+          return;
+        }
         const res = await apiGet("/chatbot/history");
         if (Array.isArray(res.messages) && res.messages.length > 0) {
           setMessages(
@@ -37,6 +40,14 @@ export default function Chatbot() {
 
   const sendMessage = async () => {
     if (!input.trim()) return;
+    if (!isAuthed()) {
+      setMessages([
+        ...messages,
+        { role: "assistant", content: "Connecte-toi pour utiliser le chatbot." }
+      ]);
+      setInput("");
+      return;
+    }
     const next: ChatMessage[] = [
       ...messages,
       { role: "user", content: input.trim() }

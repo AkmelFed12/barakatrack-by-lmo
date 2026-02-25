@@ -10,7 +10,7 @@ export default function Landing() {
           des rappels spirituels, et des conseils d organisation pour chaque jour.
         </p>
         <div className="actions">
-          <button className="btn accent">Commencer maintenant</button>
+          <Link className="btn accent" to="/signup">Commencer maintenant</Link>
           <Link className="btn" to="/dashboard">Voir le tableau de bord</Link>
         </div>
       </section>

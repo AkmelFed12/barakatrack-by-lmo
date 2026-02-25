@@ -1,11 +1,12 @@
 import { useEffect, useState } from "react";
-import { apiGet, apiPost } from "../utils/api";
+import { apiGet, apiPost, isAuthed } from "../utils/api";
 
 export default function Journal() {
   const [summary, setSummary] = useState("Aucun resume pour le moment.");
   const [history, setHistory] = useState<
     Array<{ id: string; createdAt: string; summary?: string | null }>
   >([]);
+  const [status, setStatus] = useState("");
   const [tasks, setTasks] = useState("");
   const [prayers, setPrayers] = useState(5);
   const [quranMinutes, setQuranMinutes] = useState(10);
@@ -14,6 +15,10 @@ export default function Journal() {
 
   const handleSubmit = async () => {
     try {
+      if (!isAuthed()) {
+        setStatus("Connecte-toi pour soumettre le journal.");
+        return;
+      }
       const res = await apiPost("/journal", {
         tasks,
         prayers,
@@ -23,14 +28,20 @@ export default function Journal() {
       });
       const next = res.entry?.summary ?? "Resume indisponible.";
       setSummary(next);
+      setStatus("Journal enregistre.");
     } catch {
       setSummary("Resume indisponible.");
+      setStatus("Erreur d envoi.");
     }
   };
 
   useEffect(() => {
     const run = async () => {
       try {
+        if (!isAuthed()) {
+          setHistory([]);
+          return;
+        }
         const res = await apiGet("/journal/history");
         if (Array.isArray(res.entries)) {
           setHistory(res.entries);
@@ -98,6 +109,7 @@ export default function Journal() {
           <button className="btn primary" type="button" onClick={handleSubmit}>
             Soumettre
           </button>
+          {status && <p>{status}</p>}
         </form>
 
         <div className="card">

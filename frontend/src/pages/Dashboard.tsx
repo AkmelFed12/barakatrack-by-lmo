@@ -1,14 +1,21 @@
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
-import { apiGet, apiPost } from "../utils/api";
+import { apiGet, apiPost, isAuthed } from "../utils/api";
 
 export default function Dashboard() {
   const [summary, setSummary] = useState("Chargement du resume IA...");
   const [stats, setStats] = useState<{ journalCount: number; qcmCount: number } | null>(null);
+  const [error, setError] = useState("");
 
   useEffect(() => {
     const run = async () => {
       try {
+        if (!isAuthed()) {
+          setError("Connecte-toi pour voir tes statistiques.");
+          setSummary("Connecte-toi pour voir le resume IA.");
+          setStats(null);
+          return;
+        }
         const res = await apiPost("/journal/summary", {
           text: "5 prieres, 2h etudes, marche 20 minutes"
         });
@@ -18,6 +25,7 @@ export default function Dashboard() {
       } catch {
         setSummary("Resume indisponible.");
         setStats(null);
+        setError("Connexion requise ou service indisponible.");
       }
     };
     run();
@@ -51,6 +59,7 @@ export default function Dashboard() {
         </div>
         <div className="card">
           <h3>Resume IA du jour</h3>
+          {error && <p>{error}</p>}
           <p>{summary}</p>
           <div className="list">
             <div>Conseil 1: planifier les pauses de revision.</div>

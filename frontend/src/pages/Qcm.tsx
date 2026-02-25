@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { apiGet, apiPost } from "../utils/api";
+import { apiGet, apiPost, isAuthed } from "../utils/api";
 
 type QcmResponse = {
   qcm?: {
@@ -30,6 +30,10 @@ export default function Qcm() {
   useEffect(() => {
     const runHistory = async () => {
       try {
+        if (!isAuthed()) {
+          setHistory([]);
+          return;
+        }
         const res = await apiGet("/qcm/history");
         if (Array.isArray(res.runs)) {
           setHistory(res.runs);
@@ -42,6 +46,10 @@ export default function Qcm() {
   }, []);
 
   const handleSubmit = async () => {
+    if (!isAuthed()) {
+      setFeedback("Connecte-toi pour soumettre le QCM.");
+      return;
+    }
     setLoading(true);
     setFeedback("");
     try {

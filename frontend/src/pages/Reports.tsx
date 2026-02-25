@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { apiGet } from "../utils/api";
+import { apiGet, isAuthed } from "../utils/api";
 
 export default function Reports() {
   const [pdfStatus, setPdfStatus] = useState<string | null>(null);
@@ -9,6 +9,11 @@ export default function Reports() {
     setLoading(true);
     setPdfStatus(null);
     try {
+      if (!isAuthed()) {
+        setPdfStatus("Connecte-toi pour telecharger le PDF.");
+        setLoading(false);
+        return;
+      }
       const res = await apiGet("/pdf/generate");
       if (res.base64 && res.filename) {
         const byteCharacters = atob(res.base64);
