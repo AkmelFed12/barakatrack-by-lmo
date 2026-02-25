@@ -10,16 +10,16 @@ export default function Landing() {
           des rappels spirituels, et des conseils d organisation pour chaque jour.
         </p>
         <div className="actions">
-          <Link className="btn accent" to="/signup">Commencer maintenant</Link>
+          <Link className="btn accent" to="/onboarding">Commencer maintenant</Link>
           <Link className="btn" to="/dashboard">Voir le tableau de bord</Link>
         </div>
       </section>
 
-      <section className="grid two">
-        <div className="card">
-          <h3>Apercu indice d equilibre</h3>
-          <p className="list">Spirituel, Academique, Bien-etre, avec radar et tendances.</p>
-          <div className="kpi">
+        <section className="grid two">
+          <div className="card">
+            <h3>Apercu indice d equilibre</h3>
+            <p className="list">Spirituel, Academique, Bien-etre, avec radar et tendances.</p>
+            <div className="kpi">
             <div className="card">
               <strong>78%</strong>
               <div>Spirituel</div>

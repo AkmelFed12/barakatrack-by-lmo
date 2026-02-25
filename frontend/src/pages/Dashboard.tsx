@@ -46,6 +46,16 @@ export default function Dashboard() {
             <div>Academique: 71%</div>
             <div>Bien-etre: 66%</div>
           </div>
+          <div className="actions">
+            <span className="icon-pill">
+              <span className="icon-dot" />
+              Semaine en cours
+            </span>
+            <span className="icon-pill">
+              <span className="icon-dot" />
+              +4% vs semaine derniere
+            </span>
+          </div>
           <div className="kpi">
             <div className="card">
               <strong>{stats?.journalCount ?? 0}</strong>
