@@ -46,7 +46,8 @@ export async function gradeQcm(answers: Array<unknown>) {
     answers
   )}`;
   const feedback = await callWorkersAI(prompt);
-  return { score: 0, feedback };
+  const score = Math.min(100, Math.max(0, answers.length * 10));
+  return { score, feedback };
 }
 
 export async function askAssistant(message: string) {

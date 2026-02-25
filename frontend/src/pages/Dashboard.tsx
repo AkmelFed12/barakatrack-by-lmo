@@ -14,6 +14,9 @@ export default function Dashboard() {
     qcmPrevWeek: number;
     balanceScore: number;
     journalSeries: number[];
+    qcmSeries: number[];
+    streak: number;
+    badges: string[];
   } | null>(null);
   const [reminders, setReminders] = useState<string[]>([]);
   const [error, setError] = useState("");
@@ -128,10 +131,14 @@ export default function Dashboard() {
           </div>
         </div>
         <div className="card">
-          <h3>Notifications</h3>
+          <h3>Streak & badges</h3>
           <div className="list">
-            <div>Rappel: QCM disponible.</div>
-            <div>Nouvelle recommandation IA ajoutee.</div>
+            <div>Streak: {stats?.streak ?? 0} jours</div>
+            {stats?.badges?.length ? (
+              stats.badges.map((badge) => <div key={badge}>{badge}</div>)
+            ) : (
+              <div>Aucun badge pour l instant.</div>
+            )}
           </div>
         </div>
       </section>
@@ -143,6 +150,24 @@ export default function Dashboard() {
           {reminders.map((item, index) => (
             <div key={`${item}-${index}`}>{item}</div>
           ))}
+        </div>
+      </section>
+
+      <section className="grid two">
+        <div className="card">
+          <h3>QCM hebdo</h3>
+          <Sparkline data={stats?.qcmSeries ?? [0, 0, 0, 0, 0, 0, 0]} />
+          <div className="list">
+            <div>{stats ? `${stats.qcmWeek} cette semaine / ${stats.qcmPrevWeek} derniere` : ""}</div>
+          </div>
+        </div>
+        <div className="card">
+          <h3>Objectifs rapides</h3>
+          <div className="list">
+            <div>1 journal aujourd hui</div>
+            <div>1 QCM avant maghrib</div>
+            <div>10 minutes de lecture Coran</div>
+          </div>
         </div>
       </section>
     </main>

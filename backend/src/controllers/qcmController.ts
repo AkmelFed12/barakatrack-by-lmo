@@ -3,11 +3,20 @@ import { generateQcmSet, gradeQcm } from "../services/openaiService";
 import { prisma } from "../utils/db";
 
 export async function generateQcm(_req: Request, res: Response) {
-  const { topic, level } = _req.query;
-  const qcm = await generateQcmSet(
-    typeof topic === "string" ? topic : "etudes et spiritualite",
-    typeof level === "string" ? level : "intermediaire"
-  );
+  const { topic, level, userId } = _req.query;
+  let finalTopic = typeof topic === "string" ? topic : "etudes et spiritualite";
+  let finalLevel = typeof level === "string" ? level : "intermediaire";
+
+  if (typeof userId === "string") {
+    const user = await prisma.user.findUnique({
+      where: { id: userId },
+      select: { qcmLevel: true, qcmTopic: true }
+    });
+    if (user?.qcmTopic) finalTopic = user.qcmTopic;
+    if (user?.qcmLevel) finalLevel = user.qcmLevel;
+  }
+
+  const qcm = await generateQcmSet(finalTopic, finalLevel);
   res.json({ qcm });
 }
 

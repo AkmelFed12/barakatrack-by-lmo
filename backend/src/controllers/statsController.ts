@@ -27,6 +27,29 @@ function buildSeries(entries: Array<{ createdAt: Date }>, days: number) {
   });
 }
 
+function computeStreak(entries: Array<{ createdAt: Date }>) {
+  const days = new Set(
+    entries.map((e) => startOfDay(e.createdAt).toISOString().slice(0, 10))
+  );
+  let streak = 0;
+  let cursor = startOfDay(new Date());
+  while (days.has(cursor.toISOString().slice(0, 10))) {
+    streak += 1;
+    cursor = addDays(cursor, -1);
+  }
+  return streak;
+}
+
+function computeBadges(streak: number, journalCount: number, qcmCount: number) {
+  const badges: string[] = [];
+  if (streak >= 3) badges.push("Streak 3 jours");
+  if (streak >= 7) badges.push("Streak 7 jours");
+  if (journalCount >= 10) badges.push("10 journaux");
+  if (qcmCount >= 5) badges.push("5 QCM");
+  if (qcmCount >= 20) badges.push("20 QCM");
+  return badges;
+}
+
 function computeBalance(
   entry: { prayers: number; quranMinutes: number; activityMin: number } | null,
   weights: { weightS: number; weightA: number; weightW: number },
@@ -69,7 +92,7 @@ export async function getStats(req: Request, res: Response) {
     })
   ]);
 
-  const [journalsWeek, journalsPrevWeek, qcmWeek, qcmPrevWeek, journalsSeries] =
+  const [journalsWeek, journalsPrevWeek, qcmWeek, qcmPrevWeek, journalsSeries, qcmSeries] =
     await Promise.all([
       prisma.journal.count({
         where: { userId: reqWithUser.userId, createdAt: { gte: weekStart } }
@@ -93,8 +116,16 @@ export async function getStats(req: Request, res: Response) {
         where: { userId: reqWithUser.userId, createdAt: { gte: prevWeekStart } },
         select: { createdAt: true },
         orderBy: { createdAt: "asc" }
+      }),
+      prisma.qcmRun.findMany({
+        where: { userId: reqWithUser.userId, createdAt: { gte: prevWeekStart } },
+        select: { createdAt: true },
+        orderBy: { createdAt: "asc" }
       })
     ]);
+
+  const streak = computeStreak(journalsSeries);
+  const badges = computeBadges(streak, journalCount, qcmCount);
 
   return res.json({
     journalCount,
@@ -105,6 +136,9 @@ export async function getStats(req: Request, res: Response) {
     qcmWeek,
     qcmPrevWeek,
     balanceScore: computeBalance(lastJournal, user ?? { weightS: 40, weightA: 40, weightW: 20 }, qcmWeek),
-    journalSeries: buildSeries(journalsSeries, 7)
+    journalSeries: buildSeries(journalsSeries, 7),
+    qcmSeries: buildSeries(qcmSeries, 7),
+    streak,
+    badges
   });
 }

@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { apiGet, apiPost, isAuthed, showToast } from "../utils/api";
+import { apiGet, apiPost, getUser, isAuthed, showToast } from "../utils/api";
 
 type QcmResponse = {
   qcm?: {
@@ -20,7 +20,11 @@ export default function Qcm() {
   useEffect(() => {
     const run = async () => {
       try {
-        const res: QcmResponse = await apiGet(`/qcm?topic=${encodeURIComponent(topic)}&level=${encodeURIComponent(level)}`);
+        const user = getUser();
+        const userIdParam = user?.id ? `&userId=${encodeURIComponent(user.id)}` : "";
+        const res: QcmResponse = await apiGet(
+          `/qcm?topic=${encodeURIComponent(topic)}&level=${encodeURIComponent(level)}${userIdParam}`
+        );
         setPrompt(res.qcm?.prompt ?? "QCM indisponible.");
       } catch {
         setPrompt("QCM indisponible.");
