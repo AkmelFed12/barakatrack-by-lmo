@@ -18,6 +18,7 @@ import Privacy from "./pages/Privacy";
 import Pricing from "./pages/Pricing";
 import Faq from "./pages/Faq";
 import Testimonials from "./pages/Testimonials";
+import Contact from "./pages/Contact";
 
 export default function App() {
   return (
@@ -89,6 +90,7 @@ export default function App() {
         <Route path="/pricing" element={<Pricing />} />
         <Route path="/faq" element={<Faq />} />
         <Route path="/testimonials" element={<Testimonials />} />
+        <Route path="/contact" element={<Contact />} />
         <Route path="*" element={<Navigate to="/" replace />} />
       </Route>
     </Routes>

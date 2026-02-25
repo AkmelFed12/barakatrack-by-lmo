@@ -78,13 +78,17 @@ export async function getReminders(req: Request, res: Response) {
   const startOfDay = new Date(now);
   startOfDay.setHours(0, 0, 0, 0);
 
-  const [lastJournal, qcmWeek] = await Promise.all([
+  const [lastJournal, qcmToday, user] = await Promise.all([
     prisma.journal.findFirst({
       where: { userId: reqWithUser.userId },
       orderBy: { createdAt: "desc" }
     }),
     prisma.qcmRun.count({
       where: { userId: reqWithUser.userId, createdAt: { gte: startOfDay } }
+    }),
+    prisma.user.findUnique({
+      where: { id: reqWithUser.userId },
+      select: { goal: true }
     })
   ]);
 
@@ -99,11 +103,31 @@ export async function getReminders(req: Request, res: Response) {
     });
   }
 
-  if (qcmWeek === 0) {
+  if (qcmToday === 0) {
     extras.push({
       message: "Lance un QCM pour valider tes acquis.",
       priority: "medium",
       type: "academique"
+    });
+  }
+
+  if (user?.goal === "spirituel") {
+    extras.push({
+      message: "Ajoute 5 minutes de dhikr aujourd hui.",
+      priority: "low",
+      type: "spirituel"
+    });
+  } else if (user?.goal === "academique") {
+    extras.push({
+      message: "Planifie une session de 45 min de revision.",
+      priority: "high",
+      type: "academique"
+    });
+  } else {
+    extras.push({
+      message: "Equilibre: 1 bloc etudes + 10 min marche.",
+      priority: "medium",
+      type: "bienetre"
     });
   }
 

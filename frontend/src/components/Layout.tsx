@@ -15,7 +15,8 @@ const navItems = [
   { label: "Tarifs", to: "/pricing" },
   { label: "A propos", to: "/about" },
   { label: "FAQ", to: "/faq" },
-  { label: "Temoignages", to: "/testimonials" }
+  { label: "Temoignages", to: "/testimonials" },
+  { label: "Contact", to: "/contact" }
 ];
 
 export default function Layout() {
