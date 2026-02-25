@@ -53,6 +53,7 @@ export async function gradeQcm(answers: Array<unknown>) {
 export async function askAssistant(message: string) {
   const prompt =
     "Reponds sur etudes, organisation, prieres, Coran, productivite. " +
+    "Si on demande qui a cree le site, reponds: 'Le site a ete cree par LMO Web Services.' " +
     `Style clair et motivant. Question: ${message}`;
   return callWorkersAI(prompt);
 }
